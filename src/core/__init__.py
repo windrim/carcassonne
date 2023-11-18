@@ -1,132 +1,22 @@
-import csv
-import sys
-from pathlib import Path
-from queue import LifoQueue
-from random import choice
-from typing import Any, Literal
-
-import numpy as np
-from square import Square, choose_value, constrain, neighbour_coords
-
-# number of possible tiles
-T = 113
-
-
-def load_tiles() -> tuple[Any, Any]:
-    """Loads tiles and metadata from data/tiles/ data/tiles.csv. Returns two
-    arrays: first is filenames of tiles; second is 2d array of the NESW joining
-    types of each tile.
-
-    Runs once at startup."""
-
-    fns: list[Path] = []
-    sides: list[list[int]] = []
-    static_path = Path("data/tiles/")
-    with open("data/tiles.csv", "r", encoding="utf-8") as file:
-        reader = csv.reader(file)
-        next(reader)
-        for row in reader:
-            fns.append(static_path / row[0])
-            sides.append([int(x) for x in row[1:]])
-
-    return np.array(fns), np.array(sides)
-
-
-def create_grid(n: int, m: int, t: int) -> Any:
-    """Initializes the grid as NxM, each element being an empty Square "struct"."""
-    return np.array(
-        [[Square(value=-1, domain=np.ones(t)) for _ in range(m)] for _ in range(n)]
-    )
-
-
-def create_entropy_grid(n: int, m: int) -> Any:
-    """Initializes entropy grid as NxM, each element being the maximum starting entropy, T."""
-    return np.array([[T for _ in range(m)] for _ in range(n)])
-
-
-def choose_collapse(entropies: Any) -> tuple[int, int]:
-    """Chooses square to collapse by random choice of minimum
-    values in entropies grid. Returns its [i, j] co-ordinate."""
-    lowest_entropy = np.min(entropies)
-    if lowest_entropy == T + 1:
-        return -1, -1
-    lowest_tiles = np.argwhere(entropies == lowest_entropy)
-    return lowest_tiles[choice(range(len(lowest_tiles)))]
-
-
-def collapse(i: int, j: int, grid: Any, entropies: Any) -> None:
-    """Collapses the Square at [i, j]."""
-    # upading entropy to impossible value
-    entropies[i][j] = T + 1
-
-    # updating square to a random choice
-    square = grid[i][j]
-    square.value = choose_value(square)
-
-
-def wave_function_collapse(grid: Any, entropies: Any, tileset: Any) -> Literal[0, 1]:
-    """Main algorithm. Eventually runs once per all tiles in grid. Returns 1 when grid completed,
-    else 0.
-
-    - find lowest entropy tile(s)
-    - return code 1 if no tiles with positive entropy
-    - collapse random tile from those with lowest entropy
-    """
-    # co-ordinates of tile to collapse
-    i, j = choose_collapse(entropies)
-    # quitting on -1 signal, i.e. no choices
-    if i == -1:
-        return 1
-
-    # collapsing tile
-    collapse(i, j, grid, entropies)
-
-    # stack for squares affected by collapse which now must be updated
-    stack = LifoQueue()
-
-    # adding most recent, collapsed tile to stack
-    stack.put(grid[i][j])
-
-    # co-ordinates of last processed square
-    k, l = i, j
-
-    # updating each square and its neighbours
-    while not stack.empty():
-        square = stack.get()
-
-        for direction in range(4):
-            # each square can have no neighbour in a direction if it is on that edge;
-            # in this case, we get (-1, -1) from this function
-            ncords = neighbour_coords(k, l, len(grid), len(grid[0]), direction)
-            if ncords[0] != -1:
-                ni, nj = ncords
-                # check if this neighbour is already collapsed
-                if entropies[ni][nj] < T + 1:
-                    constrained = constrain(grid, entropies, tileset, ni, nj, direction)
-                    breakpoint()
-
-    return 0
+from .grid import Dimensions, create_grids
+from .tiles import load_tiles
+from .wfc import wfc
 
 
 def main(n: int, m: int) -> None:
     """Full runtime of the board generator."""
     # loading data from file
-    files, meta = load_tiles()
+    files, tileset = load_tiles()
+
+    # dimensions
+    dims = Dimensions(n, m)
 
     # initializing grids
-    grid = create_grid(n, m, T)
-    entropies = create_entropy_grid(n, m)
+    grids = create_grids(dims)
 
     # collapsing tiles until seeing exit signal
+    breakpoint()
     while True:
-        res = wave_function_collapse(grid, entropies, meta)
+        res = wfc(grids, dims, tileset)
         if res == 1:
             break
-
-
-if __name__ == "__main__":
-    # getting NxM dimensions of board
-    N, M = sys.argv[1:]
-
-    # main runtime
-    main(int(N), int(M))

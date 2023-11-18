@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "carcassonne"
+version = "11.18"
+authors = [{ name = "Martin Allen", email = "martin.tr.allen@gmail.com" }]
+description = "IJF data pipeline"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = ["numpy", "pygame"]
+
+[project.scripts]
+wfc = "core.cli:cli"

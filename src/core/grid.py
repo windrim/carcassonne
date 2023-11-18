@@ -1,19 +1,33 @@
-"""Structures for the grid."""
+"""Structures for the grids used in this program.
+
+
+values: array[N, array[M, {-1 ... T - 1}]]
+entropies: array[N, array[M, {0 ... T - 1}]]
+domains: array[N, array[M, array[T, {0, 1}]]]
+    
+The value grid holds the value at that point, which is -1 if that point has not 
+yet been collapsed, and is otherwise a positive integer representing the index 
+of the collapsed-to tile in the tileset.   
+
+The domain grid holds a bitfield for every point indicating whether each tile in 
+the tileset is possible. Thus it is NxMxT.
+
+The entropy of a point on the grid is the size of its domain. These values
+are stored separately from the domain grid for speed only: the WFC algorithm
+finds the lowest entropy squares at every iteration, and after a point is collapsed
+we set its entropy to T + 1, allowing us to use np.min, which would fail if we
+zeroed the collapsed points' entropies.
+"""
 
 from dataclasses import dataclass
 from typing import Any, Literal
 
 import numpy as np
 
-# The constant T is the size of the Carcassonne tileset
-T = 113
+from .tiles import T
 
 # Cardinal directions as integers. Couldn't really get Enum/IntEnum working
 # here.
-NORTH = 0
-EAST = 1
-SOUTH = 2
-WEST = 3
 Direction = Literal[0, 1, 2, 3, 4]
 
 # Couldn't get type hints for numpy arrays working either. This is for semantics.
@@ -31,6 +45,22 @@ class Point:
     x: int
     y: int
 
+@dataclass(slots=True, frozen=True)
+class Grids:
+    """Container for the three grids in this algorithm."""
+    values: Array
+    entropies: Array
+    domains: Array
+
+def create_grids(dims: Dimensions) -> Grids:
+    """Initializes the three grids used in this program."""
+
+    return Grids(
+        values=np.array([[-1 for _ in range(dims.M)] for _ in range(dims.N)]),
+        entropies=np.array([[T for _ in range(dims.M)] for _ in range(dims.N)]),
+        domains=np.array([[np.ones(T) for _ in range(dims.M)] for _ in range(dims.N)]),
+    )
+
 
 def neighbour(point: Point, direction: Direction, dims: Dimensions) -> Point | None:
     """Returns the point's neighbour in the given direction, returning None if no
@@ -44,34 +74,3 @@ def neighbour(point: Point, direction: Direction, dims: Dimensions) -> Point | N
     if direction == 3 and point.x != 0:
         return Point(point.x - 1, point.y)
     return None
-
-
-def create_grid(dims: Dimensions) -> Array:
-    """Initializes the main grid: array[N, array[M, {-1 ... T - 1}]]
-
-    The main grid holds the value of the tile, which is -1 if that point has not 
-    yet been collapsed, and is otherwise a positive integer representing the index 
-    of the collapsed-to tile in the tileset."""
-    return np.array(
-        [[-1 for _ in range(dims.M)] for _ in range(dims.N)]
-    )
-
-def create_domains(dims: Dimensions) -> Array:
-    """Initializes the domain grid: array[N, array[M, array[T, {0, 1}]]]
-
-    The domain grid holds a bitfield for every point indicating whether each tile in 
-    the tileset is possible. Thus it is NxMxT."""
-    return np.array(
-        [[np.ones(T) for _ in range(dims.M)] for _ in range(dims.N)]
-    )
-
-
-def create_entropies(dims: Dimensions) -> Array:
-    """Initializes the entropies grid: array[N, array[M, {0 ... T - 1}]]
-
-    The entropy of a point on the grid is the size of its domain. These values
-    are stored separately from the domain grid for speed only: the WFC algorithm
-    finds the lowest entropy squares at every iteration."""
-    return np.array(
-        [[T for _ in range(dims.M)] for _ in range(dims.N)]
-    )
