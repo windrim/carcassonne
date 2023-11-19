@@ -3,7 +3,8 @@
 from argparse import ArgumentParser
 from dataclasses import dataclass
 
-from core import main
+from core.grid import Dimensions
+from game import game
 
 
 def cli():
@@ -13,8 +14,11 @@ def cli():
     root.add_argument("n", type=int, default=20, help="Size of X dimension of board.")
     root.add_argument("m", type=int, default=20, help="Size of Y dimension of board.")
 
-    # passing to main
-    main(**vars(root.parse_args()))
+    args = vars(root.parse_args())
+    dims = Dimensions(N=args["n"], M=args["m"])
+
+    # starting pygame
+    game(dims)
 
 
 if __name__ == "__main__":
