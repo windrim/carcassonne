@@ -11,9 +11,7 @@ def main(dims: Dimensions) -> Generator[Array, None, None]:
     """Full runtime of the board generator."""
 
     # loading data from file
-    files, tileset = load_tiles()
-    # first yielding files
-    yield files
+    _, tileset = load_tiles()
 
     # initializing grids
     grids = create_grids(dims)
@@ -25,3 +23,6 @@ def main(dims: Dimensions) -> Generator[Array, None, None]:
             break
         # continually yielding values array for render
         yield grids.values
+
+    # yielding none to signal end of run
+    yield

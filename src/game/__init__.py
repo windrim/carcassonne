@@ -7,6 +7,7 @@ import pygame
 from core import Array
 from core import main as core_main
 from core.grid import Dimensions
+from core.tiles import load_tiles
 
 WIDTH = 2000
 HEIGHT = 2000
@@ -49,11 +50,8 @@ def game(dims: Dimensions):
     pygame.display.set_caption("Carcassonne")
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
 
-    # starting wfc algorithm
-    boards = core_main(dims)
-
-    # first result of boards is the filelist
-    files = next(boards)
+    # loading file metadata
+    files, _ = load_tiles()
 
     # size of tiles given dims and screen
     xl, yl = tile_size(dims, WIDTH, HEIGHT)
@@ -61,18 +59,27 @@ def game(dims: Dimensions):
     # loading images from file
     images = load_images(files, xl, yl)
 
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                continue
+    while True:
+        screen.fill((0, 0, 0))
+        # starting wfc algorithm
+        boards = core_main(dims)
+        # animation loop
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    continue
 
-        # getting next board state
-        grid = next(boards)
-        draw(screen, dims, xl, yl, grid, images)
-
-        pygame.display.flip()
+            # getting next board state
+            grid = next(boards)
+            if grid is None:
+                time.sleep(3)
+                break
+            draw(screen, dims, xl, yl, grid, images)
+            # "Cinematic mode"
+            time.sleep(0.1)
+            pygame.display.flip()
 
     # exiting when loop stops on QUIT condition
     pygame.quit()
