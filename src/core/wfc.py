@@ -72,7 +72,11 @@ def constrain(
     # flipping setting all impossible tiles to 0 in the domain
     con[impossible_tiles] = 0
 
-    return impossible_tiles.any()
+    # updating entropy of this point after reduction
+    if constrained := impossible_tiles.any():
+        grids.entropies[npoint.x][npoint.y] = np.sum(con)
+
+    return constrained
 
 
 def wfc(grids: Grids, dims: Dimensions, tileset: Array) -> int:
