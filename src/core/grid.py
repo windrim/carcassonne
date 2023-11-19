@@ -20,37 +20,40 @@ zeroed the collapsed points' entropies.
 """
 
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any
 
 import numpy as np
 
 from .tiles import T
 
-# Cardinal directions as integers. Couldn't really get Enum/IntEnum working
-# here.
-Direction = Literal[0, 1, 2, 3, 4]
-
 # Couldn't get type hints for numpy arrays working either. This is for semantics.
 Array = Any
+
 
 @dataclass(slots=True, frozen=True)
 class Dimensions:
     """Dimensions of the grid(s)."""
-    N = int
-    M = int
+
+    N: int
+    M: int
+
 
 @dataclass(slots=True, frozen=True)
 class Point:
     """One point on a grid."""
+
     x: int
     y: int
+
 
 @dataclass(slots=True, frozen=True)
 class Grids:
     """Container for the three grids in this algorithm."""
+
     values: Array
     entropies: Array
     domains: Array
+
 
 def create_grids(dims: Dimensions) -> Grids:
     """Initializes the three grids used in this program."""
@@ -62,14 +65,14 @@ def create_grids(dims: Dimensions) -> Grids:
     )
 
 
-def neighbour(point: Point, direction: Direction, dims: Dimensions) -> Point | None:
+def neighbour(point: Point, direction: int, dims: Dimensions) -> Point | None:
     """Returns the point's neighbour in the given direction, returning None if no
     such point exists."""
     if direction == 0 and point.y != 0:
         return Point(point.x, point.y - 1)
-    if direction == 1 and point.x != dims.N:
+    if direction == 1 and point.x != dims.N - 1:
         return Point(point.x + 1, point.y)
-    if direction == 2 and point.y != dims.M:
+    if direction == 2 and point.y != dims.M - 1:
         return Point(point.x, point.y + 1)
     if direction == 3 and point.x != 0:
         return Point(point.x - 1, point.y)
