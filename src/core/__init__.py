@@ -15,7 +15,6 @@ def main(n: int, m: int) -> None:
     grids = create_grids(dims)
 
     # collapsing tiles until seeing exit signal
-    breakpoint()
     while True:
         res = wfc(grids, dims, tileset)
         if res == 1:

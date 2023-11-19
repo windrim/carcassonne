@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "carcassonne"
 version = "11.18"
 authors = [{ name = "Martin Allen", email = "martin.tr.allen@gmail.com" }]
-description = "IJF data pipeline"
+description = "Carcassonne board generator"
 readme = "README.md"
 requires-python = ">=3.12"
 
