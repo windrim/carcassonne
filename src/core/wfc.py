@@ -1,5 +1,6 @@
 """Holds the logic of the wave function collapse algorithm."""
-import time
+import logging
+import sys
 from queue import LifoQueue
 from random import choice
 from typing import Any
@@ -10,6 +11,14 @@ from .grid import Dimensions, Grids, Point, neighbour
 from .tiles import T
 
 Array = Any
+
+# LOGGING
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(10)
+formatter = logging.Formatter("[%(asctime)s][%(levelname)8s] %(message)s")
+console = logging.StreamHandler(sys.stdout)
+LOGGER.addHandler(console)
+console.setFormatter(formatter)
 
 
 def choose_collapse(entropies: Array) -> Point | None:
@@ -95,7 +104,7 @@ def wfc(grids: Grids, dims: Dimensions, tileset: Array) -> int:
 
     # collapsing chosen tile
     collapse(to_collapse, grids)
-    print(f"collapsing {to_collapse}")
+    LOGGER.debug(f"collapsing {to_collapse}")
 
     #
     # (2) PROPAGATING CONSTRAINTS:
@@ -108,7 +117,7 @@ def wfc(grids: Grids, dims: Dimensions, tileset: Array) -> int:
 
     while not stack.empty():
         point = stack.get()
-        print(f"updating point {point}")
+        LOGGER.debug(f"updating point {point}")
 
         # checking all neighbours (by direction) of the given point
         for direction in range(4):

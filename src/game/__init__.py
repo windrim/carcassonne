@@ -1,4 +1,5 @@
 """This module holds the PyGame graphic frontend for the core architecture."""
+import time
 from typing import Any
 
 import pygame
