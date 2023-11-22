@@ -20,10 +20,10 @@ CastleEdgeRoad0.png,2,2,1,1
 CastleEdgeRoad1.png,1,2,2,1
 CastleEdgeRoad2.png,1,1,2,2
 CastleEdgeRoad3.png,2,1,1,2
-CastleMini0.png,0,0,2,0
-CastleMini1.png,0,0,0,2
-CastleMini2.png,2,0,0,0
-CastleMini3.png,0,2,0,0
+CastleMini0.png,0,0,1,0
+CastleMini1.png,0,0,0,1
+CastleMini2.png,1,0,0,0
+CastleMini3.png,0,1,0,0
 CastleSides0.png,2,0,2,0
 CastleSides1.png,0,2,0,2
 CastleSidesEdge0.png,2,0,0,2
@@ -44,7 +44,7 @@ CastleTube3.png,2,0,2,0
 CastleTubeEntries0.png,1,2,1,2
 CastleTubeEntries1.png,2,1,2,1
 CastleTubeEntry0.png,0,2,1,2
-CastleTubeEntry1.png,2,0,1,2
+CastleTubeEntry1.png,2,0,2,1
 CastleTubeEntry2.png,1,2,0,2
 CastleTubeEntry3.png,2,1,2,0
 CastleWall0.png,2,0,0,0
@@ -102,7 +102,7 @@ RoadCrossSmall3.png,1,1,1,0
 RoadCurve0.png,0,0,1,1
 RoadCurve1.png,1,0,0,1
 RoadCurve2.png,1,1,0,0
-RoadCurve3.png,1,0,0,1
+RoadCurve3.png,0,1,1,0
 RoadEnd0.png,0,0,1,0
 RoadEnd1.png,0,0,0,1
 RoadEnd2.png,1,0,0,0

@@ -9,8 +9,8 @@ from core import main as core_main
 from core.grid import Dimensions
 from core.tiles import load_tiles
 
-WIDTH = 2000
-HEIGHT = 2000
+WIDTH = 1920
+HEIGHT = 1080
 
 
 def tile_size(dims: Dimensions, width: int, height: int) -> tuple[int, int]:
@@ -74,7 +74,7 @@ def game(dims: Dimensions):
             # getting next board state
             grid = next(boards)
             if grid is None:
-                time.sleep(3)
+                # time.sleep(5)
                 break
             draw(screen, dims, xl, yl, grid, images)
             # "Cinematic mode"
