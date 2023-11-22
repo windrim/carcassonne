@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Carcassonne</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="css/style.css" rel="stylesheet">
+  <!-- Pyodide -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+</head>
+
+<body>
+
+  <h1>Pyodide Test</h1>
+  <script type="text/javascript">
+    async function main() {
+      let pyodide = await loadPyodide();
+      console.log(pyodide.runPython(`
+        import sys
+        sys.version
+      `));
+      pyodide.runPython("print(1 + 1)");
+    }
+    main();
+
+  </script>
+
+</body>
+
+</html>
