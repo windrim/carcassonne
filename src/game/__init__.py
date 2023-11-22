@@ -78,7 +78,7 @@ def game(dims: Dimensions):
                 break
             draw(screen, dims, xl, yl, grid, images)
             # "Cinematic mode"
-            time.sleep(0.1)
+            # time.sleep(0.1)
             pygame.display.flip()
 
     # exiting when loop stops on QUIT condition
